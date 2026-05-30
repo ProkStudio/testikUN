@@ -2,6 +2,9 @@ appId: com.videouniquer.pro
 productName: VideoUniquer Pro
 copyright: Copyright © 2026 VideoUniquer
 
+# Не публикуем на GitHub Releases — файлы скачиваются из Actions Artifacts
+publish: null
+
 directories:
   output: release
   buildResources: resources
