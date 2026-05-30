@@ -1,0 +1,8 @@
+# macOS FFmpeg (универсальный установщик — оба типа Mac)
+#
+# resources/bin/mac/arm64/  — для M1/M2/M3
+# resources/bin/mac/x64/    — для Intel Mac
+#
+# В каждой папке: ffmpeg и ffprobe (без .exe)
+# Скачать: https://evermeet.cx/ffmpeg/
+#   chmod +x resources/bin/mac/arm64/ffmpeg resources/bin/mac/arm64/ffprobe

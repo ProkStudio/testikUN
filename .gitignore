@@ -1,0 +1,31 @@
+node_modules/
+dist/
+release/
+.DS_Store
+*.log
+.env
+.env.local
+
+# Тестовые / выходные файлы
+Uniqued_*/
+*.mp4
+*.jpg
+*.jpeg
+*.png
+test_*
+__pycache__/
+*.pyc
+
+# FFmpeg бинарники (скачиваются вручную или в CI)
+resources/bin/*.exe
+resources/bin/*.dll
+resources/bin/win/*
+!resources/bin/win/.gitkeep
+resources/bin/mac/**/*
+!resources/bin/mac/.gitkeep
+resources/bin/linux/*
+!resources/bin/linux/.gitkeep
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,6 @@
+# Папка для FFmpeg бинарников
+# Положите сюда:
+#   ffmpeg.exe
+#   ffprobe.exe
+#
+# Скачать: https://www.gyan.dev/ffmpeg/builds/ (ffmpeg-release-essentials.zip)

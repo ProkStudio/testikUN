@@ -1,0 +1,57 @@
+appId: com.videouniquer.pro
+productName: VideoUniquer Pro
+copyright: Copyright © 2026 VideoUniquer
+
+directories:
+  output: release
+  buildResources: resources
+
+files:
+  - dist/**/*
+  - electron/**/*
+  - package.json
+
+extraResources:
+  - from: resources/bin/win
+    to: bin/win
+    filter:
+      - "**/*"
+  - from: resources/bin/mac
+    to: bin/mac
+    filter:
+      - "**/*"
+  - from: resources/bin/linux
+    to: bin/linux
+    filter:
+      - "**/*"
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: "${productName}-Setup-${version}.${ext}"
+  signAndEditExecutable: false
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  shortcutName: VideoUniquer Pro
+
+mac:
+  target:
+    - target: dmg
+      arch:
+        - universal
+  artifactName: "${productName}-Setup-${version}-mac.${ext}"
+  category: public.app-category.video
+  # Без Apple Developer ID — друг сможет открыть через ПКМ → «Открыть»
+  identity: null
+  hardenedRuntime: false
+  gatekeeperAssess: false
+
+linux:
+  target:
+    - AppImage
+  category: Video

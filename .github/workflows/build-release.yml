@@ -1,0 +1,82 @@
+# Сборка Windows (.exe) и macOS (.dmg) в GitHub Actions.
+# Репозиторий → Actions → Build Release → Run workflow → скачать артефакты.
+
+name: Build Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install FFmpeg (Windows)
+        shell: pwsh
+        run: |
+          if (Test-Path resources/bin/win/ffmpeg.exe) { exit 0 }
+          New-Item -ItemType Directory -Force -Path resources/bin/win | Out-Null
+          $url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
+          Invoke-WebRequest -Uri $url -OutFile ffmpeg.zip
+          Expand-Archive -Path ffmpeg.zip -DestinationPath ffmpeg-tmp -Force
+          $bin = Get-ChildItem -Path ffmpeg-tmp -Recurse -Filter ffmpeg.exe | Select-Object -First 1
+          Copy-Item $bin.FullName resources/bin/win/ffmpeg.exe
+          $probe = Get-ChildItem -Path ffmpeg-tmp -Recurse -Filter ffprobe.exe | Select-Object -First 1
+          Copy-Item $probe.FullName resources/bin/win/ffprobe.exe
+          Remove-Item -Recurse -Force ffmpeg.zip, ffmpeg-tmp
+
+      - name: Build Windows installer
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: npm run build:win
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VideoUniquer-Pro-Windows
+          path: release/*.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install FFmpeg (macOS, arm64 + x64 для универсального DMG)
+        run: |
+          brew install ffmpeg
+          mkdir -p resources/bin/mac/arm64 resources/bin/mac/x64
+          cp "$(brew --prefix)/bin/ffmpeg" resources/bin/mac/arm64/ffmpeg
+          cp "$(brew --prefix)/bin/ffprobe" resources/bin/mac/arm64/ffprobe
+          chmod +x resources/bin/mac/arm64/*
+          curl -fsSL -o /tmp/ffmpeg-x64.zip "https://evermeet.cx/ffmpeg/ffmpeg-7.1.zip"
+          unzip -o -j /tmp/ffmpeg-x64.zip -d resources/bin/mac/x64
+          curl -fsSL -o /tmp/ffprobe-x64.zip "https://evermeet.cx/ffmpeg/ffprobe-7.1.zip"
+          unzip -o -j /tmp/ffprobe-x64.zip -d resources/bin/mac/x64
+          chmod +x resources/bin/mac/x64/*
+
+      - name: Build macOS DMG
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: npm run build:mac
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VideoUniquer-Pro-macOS
+          path: release/*.dmg
