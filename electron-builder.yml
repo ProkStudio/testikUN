@@ -46,7 +46,8 @@ mac:
         - universal
   artifactName: "${productName}-Setup-${version}-mac.${ext}"
   category: public.app-category.video
-  # Без Apple Developer ID — друг сможет открыть через ПКМ → «Открыть»
+  # FFmpeg — отдельные бинарники arm64/x64, одинаковые в обеих сборках
+  x64ArchFiles: "**/bin/mac/**"
   identity: null
   hardenedRuntime: false
   gatekeeperAssess: false
